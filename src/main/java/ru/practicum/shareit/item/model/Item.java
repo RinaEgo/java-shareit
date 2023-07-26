@@ -32,7 +32,7 @@ public class Item {
     private String description;
 
     @NotNull
-    @Column(name = "is_available")
+    @Column(name = "available")
     private Boolean available;
 
     @ManyToOne
