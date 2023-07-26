@@ -12,7 +12,6 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                item.getRequest() != null ? item.getRequest() : null,
                 new ArrayList<>());
     }
 
@@ -21,7 +20,6 @@ public class ItemMapper {
                 itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getDescription(),
-                itemDto.getAvailable(),
-                itemDto.getRequest());
+                itemDto.getAvailable());
     }
 }

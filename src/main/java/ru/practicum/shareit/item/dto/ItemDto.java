@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
-import ru.practicum.shareit.request.model.ItemRequest;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -27,8 +26,6 @@ public class ItemDto {
     @NotNull
     private Boolean available;
 
-    private ItemRequest request;
-
     private BookingCreationDto lastBooking;
 
     private BookingCreationDto nextBooking;
@@ -36,12 +33,11 @@ public class ItemDto {
     private List<CommentDto> comments;
 
     public ItemDto(Long id, String name, String description, Boolean available,
-                   ItemRequest request, List<CommentDto> comments) {
+                   List<CommentDto> comments) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.available = available;
-        this.request = request;
         this.comments = comments;
     }
 }
