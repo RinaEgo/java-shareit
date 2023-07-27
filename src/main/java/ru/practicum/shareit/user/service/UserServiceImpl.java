@@ -15,13 +15,12 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper mapper = new UserMapper();
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
-    UserMapper mapper = new UserMapper();
 
     @Transactional(readOnly = true)
     @Override
@@ -57,11 +56,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException("Пользователь с ID " + userId + " не найден."));
 
         if (user.getEmail() != null) {
-            if (user.getEmail().equals(newUser.getEmail())) {
-                newUser.setEmail(user.getEmail());
-            } else {
-                newUser.setEmail(user.getEmail());
-            }
+            newUser.setEmail(user.getEmail());
         }
 
         if (user.getName() != null) {

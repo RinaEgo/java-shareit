@@ -41,5 +41,4 @@ public class BookingMapper {
                 booking.getItem().getId(),
                 booking.getBooker().getId());
     }
-
 }

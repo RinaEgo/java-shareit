@@ -31,6 +31,9 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemMapper itemMapper = new ItemMapper();
+    private final CommentMapper commentMapper = new CommentMapper();
+    private final BookingMapper bookingMapper = new BookingMapper();
 
     @Autowired
     public ItemServiceImpl(ItemRepository itemRepository,
@@ -43,10 +46,6 @@ public class ItemServiceImpl implements ItemService {
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
     }
-
-    ItemMapper itemMapper = new ItemMapper();
-    CommentMapper commentMapper = new CommentMapper();
-    BookingMapper bookingMapper = new BookingMapper();
 
     @Transactional(readOnly = true)
     @Override

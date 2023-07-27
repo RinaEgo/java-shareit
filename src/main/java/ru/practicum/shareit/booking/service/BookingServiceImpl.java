@@ -27,6 +27,8 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final BookingMapper mapper = new BookingMapper();
+    private final Sort sort = Sort.by(Sort.Direction.DESC, "start");
 
     public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository,
                               ItemRepository itemRepository) {
@@ -34,9 +36,6 @@ public class BookingServiceImpl implements BookingService {
         this.userRepository = userRepository;
         this.itemRepository = itemRepository;
     }
-
-    BookingMapper mapper = new BookingMapper();
-    private final Sort sort = Sort.by(Sort.Direction.DESC, "start");
 
     @Transactional
     @Override
