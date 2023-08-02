@@ -20,13 +20,6 @@ public class ItemRequestDto {
     private LocalDateTime created;
     private List<ItemShortDto> items;
 
-    public ItemRequestDto(Long id, String description, LocalDateTime created, List<ItemShortDto> items) {
-        this.id = id;
-        this.description = description;
-        this.created = created;
-        this.items = items;
-    }
-
     public ItemRequestDto(Long id, String description, Long requestorId, List<ItemShortDto> items) {
         this.id = id;
         this.description = description;

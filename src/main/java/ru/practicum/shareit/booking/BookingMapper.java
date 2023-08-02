@@ -16,16 +16,6 @@ public class BookingMapper {
                 booking.getStatus());
     }
 
-    public Booking toBooking(BookingDto bookingDto) {
-        return new Booking(
-                bookingDto.getId(),
-                bookingDto.getStart(),
-                bookingDto.getEnd(),
-                bookingDto.getItem(),
-                bookingDto.getBooker(),
-                bookingDto.getStatus());
-    }
-
     public Booking toBooking(BookingCreationDto bookingCreationDto) {
         return new Booking(
                 bookingCreationDto.getId(),

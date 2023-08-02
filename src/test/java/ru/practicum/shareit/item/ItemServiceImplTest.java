@@ -23,6 +23,7 @@ import ru.practicum.shareit.user.service.UserService;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -155,5 +156,16 @@ class ItemServiceImplTest {
                 () -> itemService.createComment(item.getId(), userDto.getId(), commentDto));
         assertThat(ex.getMessage()).contains("Предмет не бронировался пользователем с id " + userDto.getId() +
                 " или аренда не завершена. Доступ к комментированию предмета закрыт.");
+    }
+
+    @Test
+    void testSearchWithBlankList() {
+        assertEquals(Collections.EMPTY_LIST, itemService.search("", 0, 2));
+    }
+
+    @Test
+    void testSearch() {
+        assertEquals(1,
+                itemService.search("ite", 0, 2).size());
     }
 }
