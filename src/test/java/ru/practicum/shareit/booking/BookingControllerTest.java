@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -40,6 +41,23 @@ class BookingControllerTest {
     void setUp() {
         bookingDto = new BookingDto(1L, start, end, null, null, Status.WAITING);
         bookingCreationDto = new BookingCreationDto(1L, start, end, null, null);
+    }
+
+    @Test
+    void testCreateBooking() throws Exception {
+        when(service.createBooking(any(BookingCreationDto.class), anyLong())).thenReturn(bookingDto);
+
+        mockMvc.perform(
+                        post("/bookings")
+                                .content(mapper.writeValueAsString(bookingCreationDto))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("X-Sharer-User-Id", 1L)
+                )
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.start").value("2100-09-01T01:00:00"))
+                .andExpect(jsonPath("$.end").value("2110-09-01T01:00:00"))
+                .andExpect(jsonPath("$.status").value(Status.WAITING.toString()));
     }
 
     @Test

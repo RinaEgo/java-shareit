@@ -112,4 +112,15 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.authorName").value("Gregory"));
         verify(itemService, times(1)).createComment(anyLong(), anyLong(), any(CommentDto.class));
     }
+
+    @Test
+    void testDeleteItem() throws Exception {
+        doNothing().when(itemService).deleteItem(anyLong());
+
+        mockMvc.perform(delete("/items/1")
+                        .header("X-Sharer-User-Id", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        verify(itemService, times(1)).deleteItem(anyLong());
+    }
 }
