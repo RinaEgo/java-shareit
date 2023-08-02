@@ -28,4 +28,17 @@ public class BookingCreationDto {
     private Long itemId;
 
     private Long bookerId;
+
+    public BookingCreationDto(LocalDateTime start, LocalDateTime end, Long itemId) {
+        this.start = start;
+        this.end = end;
+        this.itemId = itemId;
+    }
+
+    public BookingCreationDto(Long id, LocalDateTime start, LocalDateTime end, Long itemId) {
+        this.id = id;
+        this.start = start;
+        this.end = end;
+        this.itemId = itemId;
+    }
 }

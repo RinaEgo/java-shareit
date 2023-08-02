@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exception.BadRequestException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -36,13 +37,26 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getAllByUser(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                         @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getAllBookingsByUserId(userId, state);
+                                         @RequestParam(defaultValue = "ALL") String state,
+                                         @RequestParam(defaultValue = "0")   int from,
+                                         @RequestParam(defaultValue = "20")  int size) {
+        if (from < 0 || size <= 0) {
+            throw new BadRequestException("Некорректный запрос.");
+        }
+
+        return bookingService.getAllBookingsByUserId(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                          @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getAllBookingsByOwnerId(userId, state);
+                                          @RequestParam(defaultValue = "ALL") String state,
+                                          @RequestParam(defaultValue = "0") int from,
+                                          @RequestParam(defaultValue = "20") int size) {
+
+        if (from < 0 || size <= 0) {
+            throw new BadRequestException("Некорректный запрос.");
+        }
+
+        return bookingService.getAllBookingsByOwnerId(userId, state, from, size);
     }
 }

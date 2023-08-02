@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
@@ -17,6 +20,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -31,6 +36,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
     private final ItemMapper itemMapper = new ItemMapper();
     private final CommentMapper commentMapper = new CommentMapper();
     private final BookingMapper bookingMapper = new BookingMapper();
@@ -39,12 +45,14 @@ public class ItemServiceImpl implements ItemService {
     public ItemServiceImpl(ItemRepository itemRepository,
                            UserRepository userRepository,
                            BookingRepository bookingRepository,
-                           CommentRepository commentRepository) {
+                           CommentRepository commentRepository,
+                           ItemRequestRepository itemRequestRepository) {
 
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
     @Transactional(readOnly = true)
@@ -67,10 +75,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDto> findAllItems(Long userId) {
+    public List<ItemDto> findAllItems(Long userId, int from, int size) {
 
-        List<Item> items = itemRepository.findAllByOwnerId(userId);
-        List<ItemDto> itemDtoList = items.stream().map(itemMapper::toItemDto).collect(Collectors.toList());
+        List<ItemDto> itemDtoList = itemRepository
+                .findAllByOwnerId(userId, PageRequest.of(from/size, size, Sort.by("id")))
+                .stream()
+                .map(itemMapper::toItemDto)
+                .collect(Collectors.toList());
 
         itemDtoList.forEach(itemDto -> {
             addBookingInfoForItemOwner(itemDto);
@@ -104,6 +115,13 @@ public class ItemServiceImpl implements ItemService {
 
         Item item = itemMapper.toItem(itemDto);
         item.setOwner(user);
+
+        if (itemDto.getRequestId() != null) {
+            ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("Запрос с ID " + itemDto.getRequestId() + " не найден."));
+            item.setRequest(itemRequest);
+        }
+
         itemRepository.save(item);
 
         return itemMapper.toItemDto(item);
@@ -139,18 +157,19 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(String text, int from, int size) {
         List<ItemDto> searchResult = new ArrayList<>();
 
         if (text.isEmpty() || text.isBlank()) {
             return searchResult;
         }
 
-        for (Item item : itemRepository.findAll()) {
-            if (doesExist(text, item)) {
-                searchResult.add(itemMapper.toItemDto(item));
-            }
-        }
+        Pageable pageable = PageRequest.of(from/size, size, Sort.by(Sort.Direction.ASC, "id"));
+
+        searchResult = itemRepository.search(text, pageable)
+                .stream()
+                .map(itemMapper::toItemDto)
+                .collect(Collectors.toList());
 
         return searchResult;
     }
@@ -176,10 +195,5 @@ public class ItemServiceImpl implements ItemService {
         commentRepository.save(comment);
 
         return commentMapper.toCommentDto(comment);
-    }
-
-    private Boolean doesExist(String text, Item item) {
-        return (item.getName().toUpperCase().contains(text.toUpperCase()) ||
-                item.getDescription().toUpperCase().contains(text.toUpperCase())) && item.getAvailable();
     }
 }

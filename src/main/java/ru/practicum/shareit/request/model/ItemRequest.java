@@ -20,7 +20,7 @@ public class ItemRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotBlank
     @Column
@@ -31,4 +31,15 @@ public class ItemRequest {
     private User requestor;
 
     private LocalDateTime created;
+
+    public ItemRequest(Long id, String description) {
+        this.id = id;
+        this.description = description;
+    }
+
+    public ItemRequest(String description, User requestor, LocalDateTime created) {
+        this.description = description;
+        this.requestor = requestor;
+        this.created = created;
+    }
 }
