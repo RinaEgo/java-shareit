@@ -78,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> findAllItems(Long userId, int from, int size) {
 
         List<ItemDto> itemDtoList = itemRepository
-                .findAllByOwnerId(userId, PageRequest.of(from/size, size, Sort.by("id")))
+                .findAllByOwnerId(userId, PageRequest.of(from / size, size, Sort.by("id")))
                 .stream()
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -164,7 +164,7 @@ public class ItemServiceImpl implements ItemService {
             return searchResult;
         }
 
-        Pageable pageable = PageRequest.of(from/size, size, Sort.by(Sort.Direction.ASC, "id"));
+        Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "id"));
 
         searchResult = itemRepository.search(text, pageable)
                 .stream()
