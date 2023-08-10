@@ -2,6 +2,7 @@ package ru.practicum.shareit.request.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -26,6 +27,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRepository itemRepository;
     private final ItemRequestMapper requestMapper = new ItemRequestMapper();
     private final ItemMapper itemMapper = new ItemMapper();
+    private final Sort sort = Sort.by(Sort.Direction.ASC, "created");
 
     @Autowired
     public ItemRequestServiceImpl(ItemRequestRepository itemRequestRepository,
@@ -79,8 +81,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с ID " + userId + " не найден."));
 
-        List<ItemRequestDto> itemRequestDtoList = itemRequestRepository.findAllByRequestorNotLikeOrderByCreatedAsc(user,
-                        PageRequest.of(from, size))
+        List<ItemRequestDto> itemRequestDtoList = itemRequestRepository.findAllByRequestorNotLikeOrder(user,
+                        PageRequest.of(from / size, size, sort))
                 .stream()
                 .map(requestMapper::toItemRequestDto)
                 .collect(Collectors.toList());

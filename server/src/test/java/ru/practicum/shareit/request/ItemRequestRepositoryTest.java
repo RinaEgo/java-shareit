@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
@@ -29,6 +30,7 @@ class ItemRequestRepositoryTest {
     private User requestor2;
     private ItemRequest itemRequest;
     private ItemRequest itemRequest2;
+    private final Sort sort = Sort.by(Sort.Direction.ASC, "created");
 
     @BeforeEach
     void setUp() {
@@ -60,7 +62,7 @@ class ItemRequestRepositoryTest {
         itemRequest = requestRepository.save(itemRequest);
         itemRequest2 = requestRepository.save(itemRequest2);
         List<ItemRequest> requests = requestRepository
-                .findAllByRequestorNotLikeOrderByCreatedAsc(requestor1, PageRequest.of(0, 2)).toList();
+                .findAllByRequestorNotLikeOrder(requestor1, PageRequest.of(0, 2, sort)).toList();
 
         assertThat(requests).hasSize(1).contains(itemRequest2);
     }
