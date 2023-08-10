@@ -11,12 +11,13 @@ import ru.practicum.shareit.validator.ValuesAllowedConstraint;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 
+import static ru.practicum.shareit.Constant.HEADER_USER_ID;
+
 @RestController
 @RequestMapping(path = "/bookings")
 @Validated
 public class BookingController {
     private final BookingClient bookingClient;
-    private final static String HEADER = "X-Sharer-User-Id";
 
     public BookingController(BookingClient bookingClient) {
         this.bookingClient = bookingClient;
@@ -24,7 +25,7 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<Object> createBooking(@Valid @RequestBody BookItemRequestDto bookItemRequestDto,
-                                                @RequestHeader(HEADER) Long userId) {
+                                                @RequestHeader(HEADER_USER_ID) Long userId) {
         LocalDateTime start = bookItemRequestDto.getStart();
         LocalDateTime end = bookItemRequestDto.getEnd();
 
@@ -37,19 +38,19 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> responseByOwner(@PathVariable Long bookingId,
-                                                  @RequestHeader(HEADER) Long userId,
+                                                  @RequestHeader(HEADER_USER_ID) Long userId,
                                                   @RequestParam Boolean approved) {
         return bookingClient.responseByOwner(bookingId, userId, approved);
     }
 
     @GetMapping("/{bookingId}")
     public ResponseEntity<Object> getById(@PathVariable Long bookingId,
-                                          @RequestHeader(HEADER) Long userId) {
+                                          @RequestHeader(HEADER_USER_ID) Long userId) {
         return bookingClient.getBookingById(bookingId, userId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllByUser(@RequestHeader(HEADER) Long userId,
+    public ResponseEntity<Object> getAllByUser(@RequestHeader(HEADER_USER_ID) Long userId,
                                                @ValuesAllowedConstraint(propName = "state",
                                                        values = {"all",
                                                                "current",
@@ -69,7 +70,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public ResponseEntity<Object> getAllByOwner(@RequestHeader(HEADER) Long userId,
+    public ResponseEntity<Object> getAllByOwner(@RequestHeader(HEADER_USER_ID) Long userId,
                                                 @ValuesAllowedConstraint(propName = "state",
                                                         values = {"all",
                                                                 "current",
