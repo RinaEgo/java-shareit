@@ -58,6 +58,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Transactional(readOnly = true)
     @Override
     public List<ItemRequestDto> findAllRequestsByUser(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с ID " + userId + " не найден."));
 
         List<ItemRequestDto> itemRequestDtoList = itemRequestRepository.findAllByRequestorIdOrderByCreatedAsc(userId)
                 .stream()
@@ -97,6 +99,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Transactional(readOnly = true)
     @Override
     public ItemRequestDto getRequestById(Long requestId, Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с ID " + userId + " не найден."));
 
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Запрос с ID " + requestId + " не найден."));
