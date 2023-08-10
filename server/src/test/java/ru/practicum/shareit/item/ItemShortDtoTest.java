@@ -5,10 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import ru.practicum.shareit.item.dto.ItemShortDto;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.model.User;
 
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @JsonTest
 class ItemShortDtoTest {
@@ -33,5 +37,23 @@ class ItemShortDtoTest {
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("description");
         assertThat(result).extractingJsonPathBooleanValue("$.available").isTrue();
         assertThat(result).extractingJsonPathValue("$.requestId").isEqualTo(1);
+    }
+
+    @Test
+    void testShortItem() {
+        ItemMapper mapper = new ItemMapper();
+        Item item = new Item(1L, "name", "description", true);
+        User user = new User(1L, "user", "mail@ya.ru");
+        ItemRequest request = new ItemRequest(1L, "need item");
+        item.setOwner(user);
+        item.setRequest(request);
+
+        ItemShortDto shortDto = mapper.toItemShortDto(item);
+        assertEquals(item.getId(), shortDto.getId());
+        assertEquals(item.getName(), shortDto.getName());
+        assertEquals(item.getDescription(), shortDto.getDescription());
+        assertEquals(item.getAvailable(), shortDto.getAvailable());
+        assertEquals(item.getOwner().getId(), shortDto.getOwnerId());
+        assertEquals(item.getRequest().getId(), shortDto.getRequestId());
     }
 }
