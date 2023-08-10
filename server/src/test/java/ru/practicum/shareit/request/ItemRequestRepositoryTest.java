@@ -62,7 +62,7 @@ class ItemRequestRepositoryTest {
         itemRequest = requestRepository.save(itemRequest);
         itemRequest2 = requestRepository.save(itemRequest2);
         List<ItemRequest> requests = requestRepository
-                .findAllByRequestorNotLike(requestor1, PageRequest.of(0, 2, sort)).toList();
+                .findAllByRequestorNotLike(requestor1, PageRequest.of(0, 2, sort));
 
         assertThat(requests).hasSize(1).contains(itemRequest2);
     }
