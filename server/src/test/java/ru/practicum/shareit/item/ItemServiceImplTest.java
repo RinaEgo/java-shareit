@@ -60,10 +60,10 @@ class ItemServiceImplTest {
 
     @Test
     void testCreateItem() {
-        assertThat(itemDto.getName()).isEqualTo("item1");
-        assertThat(itemDto.getDescription()).isEqualTo("item description");
-        assertThat(itemDto.getAvailable()).isTrue();
-        assertThat(itemDto.getRequestId()).isNull();
+        assertThat(itemDto.getName()).as("Имя некорректно.").isEqualTo("item1");
+        assertThat(itemDto.getDescription()).as("Описание некорректно.").isEqualTo("item description");
+        assertThat(itemDto.getAvailable()).as("Статус доступа некорректен.").isTrue();
+        assertThat(itemDto.getRequestId()).as("Id запросов должен быть пуст.").isNull();
     }
 
     @Test
@@ -71,7 +71,8 @@ class ItemServiceImplTest {
         ItemDto updatedItem = new ItemDto();
         updatedItem.setName("updated name");
 
-        assertEquals("updated name", itemService.updateItem(updatedItem, item.getId(), userDto.getId()).getName());
+        assertEquals("updated name", itemService.updateItem(updatedItem, item.getId(), userDto.getId()).getName(),
+                "Обновление имени произведено некорректно.");
     }
 
     @Test
@@ -79,7 +80,8 @@ class ItemServiceImplTest {
         ItemDto updatedItem = new ItemDto();
         updatedItem.setDescription("updated description");
 
-        assertEquals("updated description", itemService.updateItem(updatedItem, item.getId(), userDto.getId()).getDescription());
+        assertEquals("updated description", itemService.updateItem(updatedItem, item.getId(), userDto.getId()).getDescription(),
+                "Обновление описания произведено некорректно.");
     }
 
     @Test
@@ -87,7 +89,8 @@ class ItemServiceImplTest {
         ItemDto updatedItem = new ItemDto();
         updatedItem.setAvailable(false);
 
-        assertEquals(false, itemService.updateItem(updatedItem, item.getId(), userDto.getId()).getAvailable());
+        assertFalse(itemService.updateItem(updatedItem, item.getId(), userDto.getId()).getAvailable(),
+                "Обновление доступа произведено некорректно.");
     }
 
     @Test
@@ -100,8 +103,9 @@ class ItemServiceImplTest {
         long idUserNotOwner = userDtoNotOwner.getId();
 
         NotFoundException ex = assertThrows(NotFoundException.class,
-                () -> itemService.updateItem(updatedItem, item.getId(), idUserNotOwner));
-        assertTrue(ex.getMessage().contains("Пользователь с id: " + idUserNotOwner + "не является владельцем предмета."));
+                () -> itemService.updateItem(updatedItem, item.getId(), idUserNotOwner), "Исключение не выброшено.");
+        assertTrue(ex.getMessage().contains("Пользователь с id: " + idUserNotOwner + "не является владельцем предмета."),
+                "Сообщение не совпадает.");
     }
 
     @Test
@@ -110,7 +114,7 @@ class ItemServiceImplTest {
         ItemDto itemDto = itemMapper.toItemDto(item);
         itemDto.setComments(new ArrayList<>());
 
-        assertEquals(itemDto, itemService.getItemById(itemDto.getId(), userDto.getId()));
+        assertEquals(itemDto, itemService.getItemById(itemDto.getId(), userDto.getId()), "Поиск произведен некорректно.");
     }
 
     @Test
@@ -118,7 +122,8 @@ class ItemServiceImplTest {
         UserDto userNotOwner = new UserDto("notOwner", "notOwner@gmail.com");
         userNotOwner = userService.createUser(userNotOwner);
 
-        assertEquals(itemMapper.toItemDto(item), itemService.getItemById(item.getId(), userNotOwner.getId()));
+        assertEquals(itemMapper.toItemDto(item), itemService.getItemById(item.getId(), userNotOwner.getId()),
+                "Поиск произведен некорректно.");
     }
 
     @Test
@@ -126,7 +131,7 @@ class ItemServiceImplTest {
         List<ItemDto> itemDtoList = new ArrayList<>();
         itemDtoList.add(itemMapper.toItemDto(item));
 
-        assertEquals(itemDtoList, itemService.findAllItems(userDto.getId(), 0, 2));
+        assertEquals(itemDtoList, itemService.findAllItems(userDto.getId(), 0, 2), "Поиск произведен некорректно.");
     }
 
     @Test
@@ -145,8 +150,8 @@ class ItemServiceImplTest {
         bookingService.responseByOwner(createdBooking.getId(), userDto.getId(), true);
         CommentDto result = itemService.createComment(item.getId(), authorDto.getId(), commentDto);
 
-        assertThat(result.getText()).isEqualTo("comment");
-        assertThat(result.getAuthorName()).isEqualTo(authorDto.getName());
+        assertThat(result.getText()).as("Текст комментария некорректен.").isEqualTo("comment");
+        assertThat(result.getAuthorName()).as("Имя автора некорректно.").isEqualTo(authorDto.getName());
     }
 
     @Test
@@ -154,18 +159,20 @@ class ItemServiceImplTest {
         CommentDto commentDto = new CommentDto(1L, "comment", "author", null);
         ValidationException ex = assertThrows(ValidationException.class,
                 () -> itemService.createComment(item.getId(), userDto.getId(), commentDto));
-        assertThat(ex.getMessage()).contains("Предмет не бронировался пользователем с id " + userDto.getId() +
+        assertThat(ex.getMessage()).as("Сообщения должны совпадать.")
+                .contains("Предмет не бронировался пользователем с id " + userDto.getId() +
                 " или аренда не завершена. Доступ к комментированию предмета закрыт.");
     }
 
     @Test
     void testSearchWithBlankList() {
-        assertEquals(Collections.EMPTY_LIST, itemService.search("", 0, 2));
+        assertEquals(Collections.EMPTY_LIST, itemService.search("", 0, 2),
+                "Список должен быть пуст.");
     }
 
     @Test
     void testSearch() {
         assertEquals(1,
-                itemService.search("ite", 0, 2).size());
+                itemService.search("ite", 0, 2).size(), "Поиск работает некорректно.");
     }
 }

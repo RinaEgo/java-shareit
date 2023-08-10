@@ -49,11 +49,11 @@ class ItemShortDtoTest {
         item.setRequest(request);
 
         ItemShortDto shortDto = mapper.toItemShortDto(item);
-        assertEquals(item.getId(), shortDto.getId());
-        assertEquals(item.getName(), shortDto.getName());
-        assertEquals(item.getDescription(), shortDto.getDescription());
-        assertEquals(item.getAvailable(), shortDto.getAvailable());
-        assertEquals(item.getOwner().getId(), shortDto.getOwnerId());
-        assertEquals(item.getRequest().getId(), shortDto.getRequestId());
+        assertEquals(item.getId(), shortDto.getId(), "ID должно совпадать.");
+        assertEquals(item.getName(), shortDto.getName(), "Имя должно совпадать.");
+        assertEquals(item.getDescription(), shortDto.getDescription(), "Описание должно совпадать.");
+        assertEquals(item.getAvailable(), shortDto.getAvailable(), "Статус доступа должен совпадать.");
+        assertEquals(item.getOwner().getId(), shortDto.getOwnerId(), "ID владельца должно совпадать.");
+        assertEquals(item.getRequest().getId(), shortDto.getRequestId(), "ID запроса должно совпадать.");
     }
 }

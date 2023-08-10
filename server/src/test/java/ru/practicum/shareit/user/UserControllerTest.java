@@ -100,6 +100,6 @@ class UserControllerTest {
         String errorMessage = "Error";
         ErrorResponse error = new ErrorResponse(errorMessage);
 
-        assertEquals(errorMessage, error.getError());
+        assertEquals(errorMessage, error.getError(), "Сообщение должно совпадать.");
     }
 }

@@ -51,11 +51,11 @@ class ItemRequestRepositoryTest {
 
         List<ItemRequest> requests = requestRepository.findAllByRequestorIdOrderByCreatedAsc(requestor1.getId());
 
-        assertThat(requests).hasSize(1).contains(itemRequest);
+        assertThat(requests).hasSize(1).as("Ошибка при поиске по ID запрашивающего.").contains(itemRequest);
     }
 
     @Test
-    void testFindAllByRequestorNotLikeOrderByCreatedAsc() {
+    void testFindAllByRequestorNot() {
         requestor1 = userRepository.save(requestor1);
         requestor2 = userRepository.save(requestor2);
 
@@ -64,6 +64,6 @@ class ItemRequestRepositoryTest {
         List<ItemRequest> requests = requestRepository
                 .findAllByRequestorNot(requestor1, PageRequest.of(0, 2, sort));
 
-        assertThat(requests).hasSize(1).contains(itemRequest2);
+        assertThat(requests).hasSize(1).as("Ошибка при поиске по ID стороннего юзера.").contains(itemRequest2);
     }
 }

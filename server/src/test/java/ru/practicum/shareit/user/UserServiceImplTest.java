@@ -39,8 +39,8 @@ class UserServiceImplTest {
 
     @Test
     void testCreateUser() {
-        assertThat(userDto.getName()).isEqualTo("user1");
-        assertThat(userDto.getEmail()).isEqualTo("user1@gmail.com");
+        assertThat(userDto.getName()).as("Имя должно совпадать.").isEqualTo("user1");
+        assertThat(userDto.getEmail()).as("Почта должна совпадать.").isEqualTo("user1@gmail.com");
     }
 
     @Test
@@ -49,7 +49,7 @@ class UserServiceImplTest {
         updated.setEmail("newEmail@gmail.com");
         userDto.setEmail("newEmail@gmail.com");
 
-        assertEquals(userDto, userService.updateUser(updated, userDto.getId()));
+        assertEquals(userDto, userService.updateUser(updated, userDto.getId()), "Обновление произведено некорректно.");
     }
 
     @Test
@@ -59,17 +59,18 @@ class UserServiceImplTest {
 
         NotFoundException ex = assertThrows(NotFoundException.class,
                 () -> userService.updateUser(anotherUser, 1000L));
-        assertThat(ex.getMessage()).contains("Пользователь с ID " + 1000L + " не найден.");
+        assertThat(ex.getMessage()).as("Сообщение должно совпадать.").contains("Пользователь с ID " + 1000L + " не найден.");
     }
 
     @Test
     void testGetUserById() {
-        assertEquals(userDto, userService.getUserById(userDto.getId()));
+        assertEquals(userDto, userService.getUserById(userDto.getId()),
+                "Ошибка при поиске юзера по ID.");
     }
 
     @Test
     void testFindAllUsers() {
         List<UserDto> userList = List.of(userDto);
-        assertEquals(userList, userService.findAllUsers());
+        assertEquals(userList, userService.findAllUsers(), "Ошибка при поиске списка всех юзеров.");
     }
 }

@@ -54,14 +54,16 @@ class ItemRequestServiceImplTest {
         requestorCreated = userMapper.toUser(userService.createUser(requestor));
         itemRequestDto = itemRequestService.createRequest(requestorCreated.getId(), itemRequestDto);
 
-        assertEquals(itemRequestDto, itemRequestService.getRequestById(itemRequestDto.getId(), requestorCreated.getId()));
+        assertEquals(itemRequestDto, itemRequestService.getRequestById(itemRequestDto.getId(), requestorCreated.getId()),
+                "Ошибка при создании запроса.");
     }
 
     @Test
     void testFindAllRequestsByUser() {
         requestorCreated = userMapper.toUser(userService.createUser(requestor));
         itemRequestDto = itemRequestService.createRequest(requestorCreated.getId(), itemRequestDto);
-        assertThat(itemRequestService.findAllRequestsByUser(requestorCreated.getId())).hasSize(1).contains(itemRequestDto);
+        assertThat(itemRequestService.findAllRequestsByUser(requestorCreated.getId())).hasSize(1)
+                .as("Ошибка при поиске запросов.").contains(itemRequestDto);
     }
 
     @Test
@@ -69,23 +71,24 @@ class ItemRequestServiceImplTest {
         requestorCreated = userMapper.toUser(userService.createUser(requestor));
         itemRequestDto = itemRequestService.createRequest(requestorCreated.getId(), itemRequestDto);
         List<ItemRequestDto> requests = itemRequestService.findAllRequests(requestorCreated.getId(), 0, 5);
-        assertThat(requests).hasSize(0);
+        assertThat(requests).as("Список должен быть пуст.").isEmpty();
     }
 
     @Test
     void testRequestFields() {
         requestorCreated = userMapper.toUser(userService.createUser(requestor));
         itemRequestDto = itemRequestService.createRequest(requestorCreated.getId(), itemRequestDto);
-        assertThat(itemRequestDto.getId()).isNotZero();
-        assertThat(itemRequestDto.getDescription()).isEqualTo("request description");
-        assertThat(itemRequestDto.getItems().size()).isZero();
-        assertThat(itemRequestDto.getRequestorId()).isEqualTo(requestorCreated.getId());
+        assertThat(itemRequestDto.getId()).as("ID не должно быть 0.").isNotZero();
+        assertThat(itemRequestDto.getDescription()).as("Описание должно совпадать.")
+                .isEqualTo("request description");
+        assertThat(itemRequestDto.getItems().size()).as("Список предметов должен быть пуст.").isZero();
+        assertThat(itemRequestDto.getRequestorId()).as("ID должно совпадать.").isEqualTo(requestorCreated.getId());
     }
 
     @Test
     void testGetRequestByIdWithUserNotFound() {
         NotFoundException ex = assertThrows(NotFoundException.class,
                 () -> itemRequestService.getRequestById(requestor.getId(), 1000L));
-        assertThat(ex.getMessage()).contains("Пользователь с ID " + 1000L + " не найден.");
+        assertThat(ex.getMessage()).as("Сообщение должно совпадать.").contains("Пользователь с ID " + 1000L + " не найден.");
     }
 }

@@ -35,7 +35,7 @@ class ItemRepositoryTest {
         item = itemRepository.save(item);
 
         List<Item> items = itemRepository.findAllByOwnerId(user.getId(), PageRequest.of(0, 2)).toList();
-        assertThat(items).hasSize(1).contains(item);
+        assertThat(items).hasSize(1).as("Ошибка при поиске предметов владельца.").contains(item);
     }
 
     @Test
@@ -44,6 +44,6 @@ class ItemRepositoryTest {
         item = itemRepository.save(item);
 
         List<Item> items = itemRepository.search("item", PageRequest.of(0, 2)).toList();
-        assertThat(items).hasSize(1).contains(item);
+        assertThat(items).hasSize(1).as("Ошибка при поиске предметов по тексту.").contains(item);
     }
 }

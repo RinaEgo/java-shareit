@@ -51,7 +51,7 @@ class BookingRepositoryTest {
         booking = bookingRepository.save(booking);
 
         List<Booking> bookings = bookingRepository.findAllByBooker(booker, PageRequest.of(0, 2));
-        assertThat(bookings).hasSize(1).contains(booking);
+        assertThat(bookings).hasSize(1).as("Ошибка при поиске брони арендатора.").contains(booking);
     }
 
     @Test
@@ -62,7 +62,7 @@ class BookingRepositoryTest {
 
         List<Booking> bookings = bookingRepository.findAllByBookerAndStartBeforeAndEndAfter(booker, LocalDateTime.now(), LocalDateTime.now(),
                 PageRequest.of(0, 2));
-        assertThat(bookings).hasSize(1).contains(booking);
+        assertThat(bookings).hasSize(1).as("Ошибка при поиске актуальной брони арендатора.").contains(booking);
     }
 
     @Test
@@ -73,7 +73,7 @@ class BookingRepositoryTest {
 
         List<Booking> bookings = bookingRepository.findAllByBookerAndEndBefore(booker, LocalDateTime.now(),
                 PageRequest.of(0, 2));
-        assertThat(bookings).hasSize(1).contains(booking);
+        assertThat(bookings).hasSize(1).as("Ошибка при поиске прошлой брони арендатора.").contains(booking);
     }
 
     @Test
@@ -84,7 +84,7 @@ class BookingRepositoryTest {
 
         List<Booking> bookings = bookingRepository.findAllByBookerAndStartAfter(booker, LocalDateTime.now(),
                 PageRequest.of(0, 2));
-        assertThat(bookings).hasSize(1).contains(booking);
+        assertThat(bookings).hasSize(1).as("Ошибка при поиске будущей брони арендатора.").contains(booking);
     }
 
     @Test
@@ -93,7 +93,7 @@ class BookingRepositoryTest {
 
         List<Booking> bookings = bookingRepository.findAllByBookerAndStatusEquals(booker, Status.WAITING,
                 PageRequest.of(0, 2));
-        assertThat(bookings).hasSize(1).contains(booking);
+        assertThat(bookings).hasSize(1).as("Ошибка при поиске брони арендатора со статусом.").contains(booking);
     }
 
     @Test
@@ -102,7 +102,7 @@ class BookingRepositoryTest {
 
         List<Booking> bookings = bookingRepository.findAllByItemOwner(owner,
                 PageRequest.of(0, 2));
-        assertThat(bookings).hasSize(1).contains(booking);
+        assertThat(bookings).hasSize(1).as("Ошибка при поиске брони владельца.").contains(booking);
     }
 
     @Test
@@ -113,7 +113,7 @@ class BookingRepositoryTest {
 
         List<Booking> bookings = bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfter(owner, LocalDateTime.now(), LocalDateTime.now(),
                 PageRequest.of(0, 2));
-        assertThat(bookings).hasSize(1).contains(booking);
+        assertThat(bookings).hasSize(1).as("Ошибка при поиске актуальной брони владельца.").contains(booking);
     }
 
     @Test
@@ -124,7 +124,7 @@ class BookingRepositoryTest {
 
         List<Booking> bookings = bookingRepository.findAllByItemOwnerAndEndBefore(owner, LocalDateTime.now(),
                 PageRequest.of(0, 2));
-        assertThat(bookings).hasSize(1).contains(booking);
+        assertThat(bookings).hasSize(1).as("Ошибка при поиске прошлой брони владельца.").contains(booking);
     }
 
     @Test
@@ -135,7 +135,7 @@ class BookingRepositoryTest {
 
         List<Booking> bookings = bookingRepository.findAllByItemOwnerAndStartAfter(owner, LocalDateTime.now(),
                 PageRequest.of(0, 2));
-        assertThat(bookings).hasSize(1).contains(booking);
+        assertThat(bookings).hasSize(1).as("Ошибка при поиске будущей брони владельца.").contains(booking);
     }
 
     @Test
@@ -144,7 +144,7 @@ class BookingRepositoryTest {
 
         List<Booking> bookings = bookingRepository.findAllByItemOwnerAndStatusEquals(owner, Status.WAITING,
                 PageRequest.of(0, 2));
-        assertThat(bookings).hasSize(1).contains(booking);
+        assertThat(bookings).hasSize(1).as("Ошибка при поиске брони владельца со статусом.").contains(booking);
     }
 
     @Test
@@ -153,7 +153,8 @@ class BookingRepositoryTest {
         booking.setEnd(LocalDateTime.parse("3500-09-01T01:00"));
         booking = bookingRepository.save(booking);
 
-        assertEquals(booking, bookingRepository.findBookingByItemWithDateBefore(item.getId(), LocalDateTime.now()));
+        assertEquals(booking, bookingRepository.findBookingByItemWithDateBefore(item.getId(), LocalDateTime.now()),
+                "Ошибка при поиске прошлой брони предмета.");
     }
 
     @Test
@@ -162,6 +163,7 @@ class BookingRepositoryTest {
         booking.setEnd(LocalDateTime.parse("3500-09-01T01:00"));
         booking = bookingRepository.save(booking);
 
-        assertEquals(booking, bookingRepository.findBookingByItemWithDateAfter(item.getId(), LocalDateTime.now()));
+        assertEquals(booking, bookingRepository.findBookingByItemWithDateAfter(item.getId(), LocalDateTime.now()),
+                "Ошибка при поиске будущей брони предмета.");
     }
 }
