@@ -23,13 +23,14 @@ public class ItemRequest {
     private Long id;
 
     @NotBlank
-    @Column
+    @Column(name = "description", nullable = false)
     private String description;
 
     @ManyToOne
     @JoinColumn(name = "requestor_id", referencedColumnName = "id")
     private User requestor;
 
+    @Column(name = "created", nullable = false)
     private LocalDateTime created;
 
     public ItemRequest(Long id, String description) {
